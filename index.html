@@ -147,7 +147,7 @@
     <div id="laser-pointer" class="fixed top-0 left-0 w-4 h-4 bg-red-600 rounded-full z-50 hidden opacity-90"></div>
 
     <!-- Chasing Cat Meme Image -->
-    <img id="chasing-cat" src="images/kattmeme.jpg" alt="Jagande katt" class="fixed top-0 left-0 w-28 h-28 object-contain z-40 hidden -translate-x-1/2 -translate-y-1/2">
+    <img id="chasing-cat" src="images/kattmeme.png" alt="Jagande katt" class="fixed top-0 left-0 w-28 h-28 object-contain z-40 hidden -translate-x-1/2 -translate-y-1/2">
 
     <!-- Bouncing Wet Cat (Klicka för att stänga ner) -->
     <img id="bouncing-wet-cat" src="images/wet-cat.png" alt="Stötande våt katt" title="Klicka på mig om du vågar stänga ner!" onclick="closePage()">
@@ -545,7 +545,7 @@
     <script>
         // --- 1. Bouncing Wet Cat Logic ---
         let posX = 100, posY = 100;
-        let velX = 2.5, velY = 2.0; // Hastighet på studsande katten
+        let velX = 1.5, velY = 1; // Hastighet på studsande katten
         const wetCat = document.getElementById('bouncing-wet-cat');
 
         function updateBouncingCat() {
@@ -721,8 +721,8 @@
 
         function animateCat() {
             if (laserActive) {
-                currentX += (targetX - currentX) * 0.08;
-                currentY += (targetY - currentY) * 0.08;
+                currentX += (targetX - currentX) * 0.02;
+                currentY += (targetY - currentY) * 0.02;
 
                 chasingCat.style.left = `${currentX}px`;
                 chasingCat.style.top = `${currentY}px`;
