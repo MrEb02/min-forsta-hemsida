@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="sv" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KattVärlden - En Levande Upplevelse</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FFF9F5',
+                        warmOrange: '#FF8A5B',
+                        softPeach: '#FEE180',
+                        purrPurple: '#6C5CE7',
+                        catPink: '#FF7675',
+                        darkSlate: '#2D3436'
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Fredoka', 'cursive']
+                    },
+                    animation: {
+                        'float': 'float 4s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-subtle': 'bounceSubtle 2s infinite',
+                        'spin-slow': 'spin 12s linear infinite'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-12px) rotate(2deg)' }
+                        },
+                        bounceSubtle: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-6px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FFF9F5;
+            background-image: radial-gradient(#FF8A5B 0.75px, transparent 0.75px), radial-gradient(#6C5CE7 0.75px, #FFF9F5 0.75px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism Effects */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .glass-nav {
+            background: rgba(255, 249, 245, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 138, 91, 0.15);
+        }
+
+        /* Laser Dot Styling */
+        #laser-pointer {
+            pointer-events: none;
+            transition: transform 0.05s ease-out;
+            box-shadow: 0 0 12px 4px rgba(255, 0, 85, 0.8), 0 0 25px 8px rgba(255, 0, 85, 0.5);
+        }
+
+        /* Floating particles */
+        .heart-particle {
+            position: fixed;
+            pointer-events: none;
+            animation: floatUpAndFade 1.2s ease-out forwards;
+            z-index: 9999;
+        }
+
+        @keyframes floatUpAndFade {
+            0% { opacity: 1; transform: translateY(0) scale(0.6) rotate(0deg); }
+            50% { opacity: 0.9; transform: translateY(-40px) scale(1.2) rotate(15deg); }
+            100% { opacity: 0; transform: translateY(-90px) scale(0.8) rotate(-15deg); }
+        }
+
+        /* Sound ripple */
+        .sound-badge {
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.3) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Custom Clip Paths for organic images */
+        .blob-shape-1 {
+            clip-path: polygon(10% 0%, 90% 0%, 100% 85%, 85% 100%, 15% 100%, 0% 80%);
+        }
+
+        /* Tilt smooth movement */
+        .tilt-card {
+            transform-style: preserve-3d;
+            transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.2s ease;
+        }
+    </style>
+</head>
+<body class="text-darkSlate font-sans leading-relaxed selection:bg-warmOrange selection:text-white">
+
+    <!-- Laser Dot Target (Controlled by JS) -->
+    <div id="laser-pointer" class="fixed top-0 left-0 w-4 h-4 bg-red-600 rounded-full z-50 hidden opacity-90"></div>
+
+    <!-- Floating Paw Background Particles -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 opacity-10">
+        <i class="fa-solid fa-paw absolute top-12 left-10 text-4xl text-warmOrange animate-float" style="animation-delay: 0s;"></i>
+        <i class="fa-solid fa-paw absolute top-1/3 right-16 text-6xl text-purrPurple animate-float" style="animation-delay: 1.5s;"></i>
+        <i class="fa-solid fa-paw absolute bottom-1/4 left-1/4 text-5xl text-catPink animate-float" style="animation-delay: 2.5s;"></i>
+        <i class="fa-solid fa-paw absolute bottom-10 right-1/3 text-4xl text-warmOrange animate-float" style="animation-delay: 0.8s;"></i>
+    </div>
+
+    <!-- Header / Navigation -->
+    <nav class="fixed top-0 left-0 w-full glass-nav z-40 transition-all duration-300 px-6 py-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-warmOrange to-softPeach flex items-center justify-center text-white text-xl shadow-lg shadow-warmOrange/30 group-hover:rotate-12 transition-transform">
+                    <i class="fa-solid fa-cat"></i>
+                </div>
+                <span class="font-display font-bold text-2xl text-darkSlate tracking-tight">Katt<span class="text-warmOrange">Världen</span></span>
+            </a>
+
+            <!-- Action Controls -->
+            <div class="flex items-center gap-3">
+                <button id="toggle-laser" onclick="toggleLaserPointer()" class="flex items-center gap-2 px-4 py-2 rounded-full font-display font-semibold text-sm bg-white/80 hover:bg-red-50 text-red-600 border border-red-200 shadow-sm hover:shadow transition-all active:scale-95">
+                    <i class="fa-solid fa-bullseye text-red-500 animate-pulse"></i>
+                    <span id="laser-text">Aktivera Laserleksak</span>
+                </button>
+                <a href="#quiz" class="hidden sm:flex items-center gap-2 px-5 py-2 rounded-full font-display font-semibold text-sm bg-warmOrange hover:bg-orange-600 text-white shadow-md shadow-warmOrange/30 transition-all active:scale-95">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Kattquizz</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <!-- Hero Text Content -->
+            <div class="lg:col-span-7 space-y-6 text-center lg:text-left z-10">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100 text-warmOrange font-display font-semibold text-sm animate-bounce-subtle">
+                    <i class="fa-solid fa-heart text-catPink"></i>
+                    <span>Välkommen till en mjauing värld!</span>
+                </div>
+                <h1 class="font-display font-bold text-4xl sm:text-6xl text-darkSlate leading-tight">
+                    Upptäck katters fantastiska <span class="text-transparent bg-clip-text bg-gradient-to-r from-warmOrange via-catPink to-purrPurple">personlighet & magi</span>
+                </h1>
+                <p class="text-lg text-slate-600 max-w-xl mx-auto lg:mx-0">
+                    Katter är mystiska, majestätiska och framför allt helt underbart tokiga. Klicka på korten nedan för att klappa dem och väcka sidan till liv!
+                </p>
+
+                <!-- Interactive Quick Sound Board -->
+                <div class="pt-4 flex flex-wrap justify-center lg:justify-start gap-4">
+                    <button onclick="playPurrSound(event)" class="group px-6 py-3 rounded-2xl bg-white/90 shadow-lg hover:shadow-xl border border-orange-100 flex items-center gap-3 transition-all duration-300 hover:-translate-y-1">
+                        <span class="w-10 h-10 rounded-xl bg-orange-100 text-warmOrange flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </span>
+                        <div class="text-left">
+                            <div class="font-display font-bold text-sm text-darkSlate">Starta Spinnande</div>
+                            <div class="text-xs text-slate-400">Klicka för purr-effekt</div>
+                        </div>
+                    </button>
+
+                    <button onclick="triggerMeow(event)" class="group px-6 py-3 rounded-2xl bg-white/90 shadow-lg hover:shadow-xl border border-purple-100 flex items-center gap-3 transition-all duration-300 hover:-translate-y-1">
+                        <span class="w-10 h-10 rounded-xl bg-purple-100 text-purrPurple flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-comment-dots"></i>
+                        </span>
+                        <div class="text-left">
+                            <div class="font-display font-bold text-sm text-darkSlate">Säg Mjau!</div>
+                            <div class="text-xs text-slate-400">Få hälsning från katten</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hero Interactive Image Collage -->
+            <div class="lg:col-span-5 relative flex justify-center">
+                <div class="relative w-full max-w-md">
+                    <!-- Background Glow -->
+                    <div class="absolute inset-0 bg-gradient-to-tr from-warmOrange/30 to-purrPurple/30 rounded-3xl blur-2xl transform rotate-6"></div>
+                    
+                    <!-- Main Hero Card Container -->
+                    <div class="relative glass-card rounded-3xl p-5 shadow-2xl transition-transform hover:scale-[1.02]">
+                        <div class="relative rounded-2xl overflow-hidden group cursor-pointer" onclick="handlePetCat(event, 'Stolta vänner!')">
+                            <img src="image_20e61d.png" alt="Stolt Maine Coon och Bondkatt" class="w-full h-80 object-cover transform group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-darkSlate/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
+                            
+                            <div class="absolute bottom-4 left-4 right-4 text-white">
+                                <span class="bg-warmOrange/90 text-white px-3 py-1 rounded-full text-xs font-display font-semibold uppercase tracking-wider mb-2 inline-block">Utomhusspaning</span>
+                                <h3 class="font-display font-bold text-xl">Leo & Simba</h3>
+                                <p class="text-xs text-slate-200 flex items-center gap-1 mt-1">
+                                    <i class="fa-solid fa-hand-pointer text-warmOrange"></i> Klicka för att klappa
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Floating Micro Badge -->
+                        <div class="absolute -top-4 -right-4 bg-white px-4 py-2 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-2 animate-bounce-subtle">
+                            <span class="text-xl">🐱</span>
+                            <span class="font-display font-bold text-xs text-darkSlate">Kattens Dag Idag!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Dynamic Gallery Section -->
+    <section class="py-16 px-6 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            
+            <div class="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                <h2 class="font-display font-bold text-3xl sm:text-4xl text-darkSlate">
+                    Katternas Tre Världar
+                </h2>
+                <p class="text-slate-600">
+                    Interagera med korten för att upptäcka katternas olika humör och personligheter.
+                </p>
+            </div>
+
+            <!-- Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Card 1: Stolt & Majestätisk -->
+                <div class="tilt-card glass-card rounded-3xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group"
+                     onmousemove="handleTilt(event, this)" 
+                     onmouseleave="resetTilt(this)"
+                     onclick="handlePetCat(event, 'Spinn... Majestätisk klapp!')">
+                    <div>
+                        <div class="relative overflow-hidden rounded-2xl h-64 mb-4">
+                            <img src="image_20e61d.png" alt="Majestätiska katter" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-display font-bold text-darkSlate shadow">
+                                <i class="fa-solid fa-crown text-amber-500 mr-1"></i> Majestätisk
+                            </div>
+                        </div>
+                        <h3 class="font-display font-bold text-xl text-darkSlate group-hover:text-warmOrange transition-colors">
+                            Stolt & Majestätisk
+                        </h3>
+                        <p class="text-sm text-slate-600 mt-2">
+                            Maine Coon & Bondkatt njuter av naturens lugn. De har full koll på sitt territorium med stolt blick.
+                        </p>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center">
+                        <span class="text-xs font-semibold text-slate-400">Humör: Lugn & Stolt</span>
+                        <button class="w-9 h-9 rounded-full bg-orange-100 text-warmOrange flex items-center justify-center group-hover:bg-warmOrange group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 2: Lekfulla Kattungar -->
+                <div class="tilt-card glass-card rounded-3xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group"
+                     onmousemove="handleTilt(event, this)" 
+                     onmouseleave="resetTilt(this)"
+                     onclick="handlePetCat(event, 'Purrrr! Kattunge-kram!')">
+                    <div>
+                        <div class="relative overflow-hidden rounded-2xl h-64 mb-4">
+                            <img src="image_20e602.png" alt="Kattungar i en låda" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-display font-bold text-darkSlate shadow">
+                                <i class="fa-solid fa-box-open text-warmOrange mr-1"></i> Kartong-älskare
+                            </div>
+                        </div>
+                        <h3 class="font-display font-bold text-xl text-darkSlate group-hover:text-warmOrange transition-colors">
+                            Lekfulla Kattungar
+                        </h3>
+                        <p class="text-sm text-slate-600 mt-2">
+                            Ett helt gäng busiga kattungar i sin favoritplats – en mysig pappkartong full av bus och vila!
+                        </p>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center">
+                        <span class="text-xs font-semibold text-slate-400">Humör: Superbusig</span>
+                        <button class="w-9 h-9 rounded-full bg-pink-100 text-catPink flex items-center justify-center group-hover:bg-catPink group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 3: Tokiga & Busiga Katter -->
+                <div class="tilt-card glass-card rounded-3xl p-4 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group"
+                     onmousemove="handleTilt(event, this)" 
+                     onmouseleave="resetTilt(this)"
+                     onclick="handlePetCat(event, 'Mjau! Vilken galning!')">
+                    <div>
+                        <div class="relative overflow-hidden rounded-2xl h-64 mb-4">
+                            <img src="image_20e31d.png" alt="Tokig katt med tungan ute" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-display font-bold text-darkSlate shadow">
+                                <i class="fa-solid fa-face-grin-tears text-purrPurple mr-1"></i> Tokstolle
+                            </div>
+                        </div>
+                        <h3 class="font-display font-bold text-xl text-darkSlate group-hover:text-warmOrange transition-colors">
+                            Tokiga & Busiga Katter
+                        </h3>
+                        <p class="text-sm text-slate-600 mt-2">
+                            Från katter som räcker ut tungan i klätterträdet till akrobater som hänger upp och ner i gardinen!
+                        </p>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center">
+                        <span class="text-xs font-semibold text-slate-400">Humör: Vild & Tokig</span>
+                        <button class="w-9 h-9 rounded-full bg-purple-100 text-purrPurple flex items-center justify-center group-hover:bg-purrPurple group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Fun Fact Generator Section -->
+    <section class="py-12 px-6 relative z-10">
+        <div class="max-w-4xl mx-auto glass-card rounded-3xl p-8 sm:p-10 shadow-xl text-center relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-softPeach/50 rounded-full blur-xl pointer-events-none"></div>
+            
+            <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-warmOrange to-catPink text-white flex items-center justify-center text-xl mx-auto shadow-md shadow-warmOrange/30 mb-4">
+                <i class="fa-solid fa-lightbulb"></i>
+            </span>
+
+            <h3 class="font-display font-bold text-2xl text-darkSlate mb-4">Visste du det här om katter?</h3>
+
+            <!-- Fact Text Box -->
+            <div class="min-h-[90px] flex items-center justify-center my-4">
+                <p id="fact-display" class="font-display text-lg sm:text-xl text-slate-700 transition-opacity duration-300">
+                    "Katter tillbringar ungefär 70% av sina liv med att sofa och sova."
+                </p>
+            </div>
+
+            <button onclick="generateFact()" class="mt-4 px-6 py-3 rounded-full bg-darkSlate hover:bg-black text-white font-display font-semibold text-sm shadow-md transition-all active:scale-95 flex items-center gap-2 mx-auto">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span>Slumpa Ny Kattfakta</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Interactive Cat Personality Quiz Section -->
+    <section id="quiz" class="py-16 px-6 relative z-10">
+        <div class="max-w-3xl mx-auto bg-white/90 backdrop-blur-lg rounded-3xl p-8 sm:p-12 shadow-2xl border border-orange-100">
+            <div class="text-center mb-8">
+                <span class="text-xs font-display font-bold text-warmOrange uppercase tracking-wider bg-orange-100 px-3 py-1 rounded-full">Interaktivt Quiz</span>
+                <h2 class="font-display font-bold text-3xl text-darkSlate mt-2">Vilken Katttyp Är Du? 😼</h2>
+                <p class="text-slate-500 text-sm mt-1">Svara på 3 snabba frågor och upptäck din inre katt!</p>
+            </div>
+
+            <div id="quiz-container">
+                <!-- Question 1 -->
+                <div class="quiz-step space-y-4" id="step-1">
+                    <h4 class="font-display font-semibold text-lg text-darkSlate">1. Hur spenderar du helst en ledig söndag?</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button onclick="answerQuiz(1, 'A')" class="p-4 rounded-2xl border-2 border-slate-100 hover:border-warmOrange hover:bg-orange-50/50 text-left transition-all font-medium text-slate-700 flex items-center gap-3">
+                            <span class="text-2xl">😴</span> Nedbäddad i soffan hela dagen
+                        </button>
+                        <button onclick="answerQuiz(1, 'B')" class="p-4 rounded-2xl border-2 border-slate-100 hover:border-warmOrange hover:bg-orange-50/50 text-left transition-all font-medium text-slate-700 flex items-center gap-3">
+                            <span class="text-2xl">🏞️</span> Utomhus på äventyr i naturen
+                        </button>
+                        <button onclick="answerQuiz(1, 'C')" class="p-4 rounded-2xl border-2 border-slate-100 hover:border-warmOrange hover:bg-orange-50/50 text-left transition-all font-medium text-slate-700 flex items-center gap-3">
+                            <span class="text-2xl">🤪</span> Hitta på bus och testa nya saker
+                        </button>
+                        <button onclick="answerQuiz(1, 'D')" class="p-4 rounded-2xl border-2 border-slate-100 hover:border-warmOrange hover:bg-orange-50/50 text-left transition-all font-medium text-slate-700 flex items-center gap-3">
+                            <span class="text-2xl">👑</span> Bli servad god mat och bara njuta
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="quiz-step hidden space-y-4" id="step-2">
+                    <h4 class="font-display font-semibold text-lg text-darkSlate">2. Vad gör du när du ser en tom kartong?</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button onclick="answerQuiz(2, 'A')" class="p-4 rounded-2xl border-2 border-slate-100 hover:border-warmOrange hover:bg-orange-50/50 text-left transition-all font-medium text-slate-700 flex items-center gap-3">
+                            <span class="text-2xl">📦</span> Hoppar rakt i! Om jag får plats så sitter jag.
+                        </button>
+                        <button onclick="answerQuiz(2, 'B')" class="p-4 rounded-2xl border-2 border-slate-100 hover:border-warmOrange hover:bg-orange-50/50 text-left transition-all font-medium text-slate-700 flex items-center gap-3">
+                            <span class="text-2xl">😼</span> Inspekterar den noga innan beslut.
+                        </button>
+                        <button onclick="answerQuiz(2, 'C')" class="p-4 rounded-2xl border-2 border-slate-100 hover:border-warmOrange hover:bg-orange-50/50 text-left transition-all font-medium text-slate-700 flex items-center gap-3">
+                            <span class="text-2xl">🐾</span> River sönder den för att det är kul.
+                        </button>
+                        <button onclick="answerQuiz(2, 'D')" class="p-4 rounded-2xl border-2 border-slate-100 hover:border-warmOrange hover:bg-orange-50/50 text-left transition-all font-medium text-slate-700 flex items-center gap-3">
+                            <span class="text-2xl">🙄</span> Ignorerar den. Jag förtjänar en lyxsäng.
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="quiz-step hidden space-y-4" id="step-3">
+                    <h4 class="font-display font-semibold text-lg text-darkSlate">3. Vad är din reaktion när någon försöker väcka dig?</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button onclick="answerQuiz(3, 'A')" class="p-4 rounded-2xl border-2 border-slate-100 hover:border-warmOrange hover:bg-orange-50/50 text-left transition-all font-medium text-slate-700 flex items-center gap-3">
+                            <span class="text-2xl">😾</span> Ge dem en vass blick och rulla ihop mig igen.
+                        </button>
+                        <button onclick="answerQuiz(3, 'B')" class="p-4 rounded-2xl border-2 border-slate-100 hover:border-warmOrange hover:bg-orange-50/50 text-left transition-all font-medium text-slate-700 flex items-center gap-3">
+                            <span class="text-2xl">😸</span> Börjar spinna direkt och vill ha godis!
+                        </button>
+                        <button onclick="answerQuiz(3, 'C')" class="p-4 rounded-2xl border-2 border-slate-100 hover:border-warmOrange hover:bg-orange-50/50 text-left transition-all font-medium text-slate-700 flex items-center gap-3">
+                            <span class="text-2xl">🙃</span> Gör en gymnastisk volt ur sängen.
+                        </button>
+                        <button onclick="answerQuiz(3, 'D')" class="p-4 rounded-2xl border-2 border-slate-100 hover:border-warmOrange hover:bg-orange-50/50 text-left transition-all font-medium text-slate-700 flex items-center gap-3">
+                            <span class="text-2xl">👑</span> Sträcker majestätiskt på mig.
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quiz Result -->
+                <div id="quiz-result" class="hidden text-center space-y-6 py-4">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-warmOrange to-softPeach text-white flex items-center justify-center text-4xl mx-auto shadow-xl">
+                        <span id="result-emoji">🦁</span>
+                    </div>
+                    <h3 id="result-title" class="font-display font-bold text-2xl text-darkSlate">Du är en Majestätisk Kung!</h3>
+                    <p id="result-desc" class="text-slate-600 max-w-md mx-auto">
+                        Du är stolt, lugn och uppskattar livets goda. Du regerar över ditt hem med elegans!
+                    </p>
+                    <button onclick="resetQuiz()" class="px-6 py-3 rounded-full bg-warmOrange hover:bg-orange-600 text-white font-display font-semibold text-sm shadow-lg transition-all active:scale-95">
+                        Gör Quizet Igen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 px-6 text-center text-slate-400 text-sm border-t border-orange-100/50 relative z-10">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2 font-display font-bold text-darkSlate">
+                <i class="fa-solid fa-cat text-warmOrange"></i> KattVärlden
+            </div>
+            <p>Skapad för kattälskare 🐾 Klicka överallt för att utforska interaktiva moment!</p>
+        </div>
+    </footer>
+
+    <!-- Interactive JavaScript Logic -->
+    <script>
+        // --- 1. Audio Sound Effects (Web Audio API Synthesizer) ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        // Generate synthetic Meow sound
+        function playMeowSound() {
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'sine';
+                
+                // Frequency slide for a cute meow
+                const now = audioCtx.currentTime;
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+                osc.frequency.exponentialRampToValueAtTime(500, now + 0.4);
+
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } catch(e) {
+                console.log("Audio play blocked or unsupported");
+            }
+        }
+
+        // Generate synthetic Purr sound
+        function playPurrSound(e) {
+            try {
+                initAudio();
+                const now = audioCtx.currentTime;
+                
+                // Create low frequency rumble oscillation
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(25, now);
+                
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 1.2);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(now);
+                osc.stop(now + 1.2);
+            } catch(e) {}
+
+            if(e) showSoundBadge(e.clientX, e.clientY, "Purrrrr... 🐱");
+        }
+
+        function triggerMeow(e) {
+            playMeowSound();
+            const meowTexts = ["Mjauuu! 🐾", "Mjaoo! ❤️", "Kurr kurr! 😺", "Mjau! ✨"];
+            const randomText = meowTexts[Math.floor(Math.random() * meowTexts.length)];
+            const x = e ? e.clientX : window.innerWidth / 2;
+            const y = e ? e.clientY : window.innerHeight / 2;
+            showSoundBadge(x, y, randomText);
+        }
+
+        // Floating visual sound text
+        function showSoundBadge(x, y, text) {
+            const badge = document.createElement('div');
+            badge.className = 'fixed pointer-events-none z-50 bg-darkSlate text-white font-display text-xs font-bold px-3 py-1.5 rounded-full shadow-lg sound-badge';
+            badge.style.left = `${x - 30}px`;
+            badge.style.top = `${y - 40}px`;
+            badge.innerText = text;
+            document.body.appendChild(badge);
+
+            setTimeout(() => {
+                badge.remove();
+            }, 1000);
+        }
+
+        // --- 2. Pet the Cat Interactive Particle Effect ---
+        function handlePetCat(event, message) {
+            playMeowSound();
+            createHeartParticles(event.clientX, event.clientY);
+            showSoundBadge(event.clientX, event.clientY, message || "Purrr! ❤️");
+        }
+
+        function createHeartParticles(x, y) {
+            const icons = ['❤️', '💖', '🐾', '✨', '😻'];
+            for (let i = 0; i < 6; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'heart-particle text-xl';
+                particle.innerText = icons[Math.floor(Math.random() * icons.length)];
+                
+                // Spread particles randomly
+                const offsetX = (Math.random() - 0.5) * 60;
+                const offsetY = (Math.random() - 0.5) * 20;
+                
+                particle.style.left = `${x + offsetX}px`;
+                particle.style.top = `${y + offsetY}px`;
+                
+                document.body.appendChild(particle);
+
+                setTimeout(() => particle.remove(), 1200);
+            }
+        }
+
+        // --- 3. Interactive Laser Pointer Toy ---
+        let laserActive = false;
+        const laserDot = document.getElementById('laser-pointer');
+        let laserBounceInterval = null;
+
+        function toggleLaserPointer() {
+            laserActive = !laserActive;
+            const laserText = document.getElementById('laser-text');
+
+            if (laserActive) {
+                laserDot.classList.remove('hidden');
+                laserText.innerText = "Stäng av Laserleksak";
+                document.addEventListener('mousemove', followLaser);
+            } else {
+                laserDot.classList.add('hidden');
+                laserText.innerText = "Aktivera Laserleksak";
+                document.removeEventListener('mousemove', followLaser);
+                clearInterval(laserBounceInterval);
+            }
+        }
+
+        function followLaser(e) {
+            if (!laserActive) return;
+            laserDot.style.transform = `translate(${e.clientX - 8}px, ${e.clientY - 8}px)`;
+        }
+
+        // --- 4. 3D Card Parallax Tilt Effect ---
+        function handleTilt(e, card) {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = ((y - centerY) / centerY) * -8;
+            const rotateY = ((x - centerX) / centerX) * 8;
+            
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
+        }
+
+        function resetTilt(card) {
+            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+        }
+
+        // --- 5. Dynamic Cat Fun Fact Generator ---
+        const catFacts = [
+            "Katter tillbringar ungefär 70% av sina liv med att sofa och sova.",
+            "En katts spinnande kan ha en läkande effekt på mänskliga ben och muskler (mellan 20-140 Hz).",
+            "Katter kan göra över 100 olika vokala ljud, medan hundar bara kan göra runt 10!",
+            "Kattens barträd (mustascher) hjälper den att navigera i mörker och mäta öppningar.",
+            "En grupp katter kallas på engelska för en 'clowder'.",
+            "Katter har 32 muskler i varje öra som gör att de kan rotera öronen 180 grader!"
+        ];
+
+        let currentFactIndex = 0;
+
+        function generateFact() {
+            const factDisplay = document.getElementById('fact-display');
+            factDisplay.style.opacity = '0';
+
+            setTimeout(() => {
+                currentFactIndex = (currentFactIndex + 1) % catFacts.length;
+                factDisplay.innerText = `"${catFacts[currentFactIndex]}"`;
+                factDisplay.style.opacity = '1';
+                playPurrSound();
+            }, 300);
+        }
+
+        // --- 6. Quiz State Management ---
+        let quizAnswers = [];
+
+        function answerQuiz(step, answer) {
+            quizAnswers.push(answer);
+            document.getElementById(`step-${step}`).classList.add('hidden');
+            
+            if (step < 3) {
+                document.getElementById(`step-${step + 1}`).classList.remove('hidden');
+            } else {
+                showQuizResult();
+            }
+        }
+
+        function showQuizResult() {
+            const resultBox = document.getElementById('quiz-result');
+            const title = document.getElementById('result-title');
+            const desc = document.getElementById('result-desc');
+            const emoji = document.getElementById('result-emoji');
+
+            resultBox.classList.remove('hidden');
+
+            // Simple personality check
+            const counts = {};
+            quizAnswers.forEach(ans => counts[ans] = (counts[ans] || 0) + 1);
+            const mostFrequent = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+
+            if (mostFrequent === 'A') {
+                title.innerText = "Du är en Livsnjutande Sjusovare! 😴";
+                desc.innerText = "Ditt idealiska tillstånd är ihoprullad i en solstråle. Du älskar lugn, ro och mycket mys!";
+                emoji.innerText = "😺";
+            } else if (mostFrequent === 'B') {
+                title.innerText = "Du är en Nyfiken Utekatts-Äventyrare! 🏞️";
+                desc.innerText = "Du älskar att utforska, spana på fåglar och upptäcka nya platser. Inget stoppar dig!";
+                emoji.innerText = "🐈";
+            } else if (mostFrequent === 'C') {
+                title.innerText = "Du är en Vild & Tokig Buskatt! 🤪";
+                desc.innerText = "Full av energi kl 03:00 på natten! Du racker ut tungan och gör akrobatik i gardinerna.";
+                emoji.innerText = "😹";
+            } else {
+                title.innerText = "Du är en Majestätisk Kung/Drottning! 👑";
+                desc.innerText = "Du kräver respekt, god gourmetmat och bästa platsen i soffan. Elegans är ditt andranamn.";
+                emoji.innerText = "🦁";
+            }
+
+            playMeowSound();
+        }
+
+        function resetQuiz() {
+            quizAnswers = [];
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('step-1').classList.remove('hidden');
+            document.getElementById('step-2').classList.add('hidden');
+            document.getElementById('step-3').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
