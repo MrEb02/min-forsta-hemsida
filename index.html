@@ -540,6 +540,26 @@
             <p>Skapad för kattälskare 🐾 Klicka överallt för att utforska interaktiva moment!</p>
         </div>
     </footer>
+    
+    <!-- Egen anpassad pop-up-ruta för våta katten -->
+    <div id="wet-cat-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl text-center space-y-4 border-2 border-catPink animate-bounce-subtle">
+            <div class="text-4xl">😾</div>
+            <h3 class="font-display font-bold text-2xl text-darkSlate">Våt katt attackerar!</h3>
+            <p class="text-slate-600 text-sm">Vad vill du göra?</p>
+            
+            <div class="flex gap-3 pt-2">
+                <!-- Vänster knapp: "o nej" -->
+                <button onclick="closeWetCatModal()" class="flex-1 py-3 px-4 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-display font-semibold text-sm transition-all">
+                    o nej
+                </button>
+                <!-- Höger knapp: "ge honom mat" -->
+                <button onclick="feedWetCat()" class="flex-1 py-3 px-4 rounded-full bg-catPink hover:bg-pink-600 text-white font-display font-semibold text-sm shadow-md shadow-pink-300 transition-all">
+                    ge honom mat
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Interactive JavaScript Logic -->
     <script>
@@ -570,13 +590,26 @@
             requestAnimationFrame(updateBouncingCat);
         }
         updateBouncingCat();
-
-        // Stäng ner sidan vid klick
+        
+                // När man klickar på den studsande våta katten öppnas vår egna snygga ruta
         function closePage() {
-            alert("Våt katt attackerar! Stänger ner sidan...");
-            window.close();
-            // Om webbläsaren blockerar window.close() skickas man till en tom sida / stängs av
-            window.location.href = "about:blank";
+            const modal = document.getElementById('wet-cat-modal');
+            modal.classList.remove('hidden');
+        }
+        
+        // När man trycker på "o nej" eller kryssar ner
+        function closeWetCatModal() {
+            const modal = document.getElementById('wet-cat-modal');
+            modal.classList.add('hidden');
+        }
+        
+        // När man trycker på "ge honom mat"
+        function feedWetCat() {
+            const modal = document.getElementById('wet-cat-modal');
+            modal.classList.add('hidden');
+            // Visar en glad ljudbadge som tack för maten!
+            showSoundBadge(window.innerWidth / 2, window.innerHeight / 2, "Mums! Tack för maten 🐟❤️");
+            playPurrSound();
         }
 
         // --- 2. Scroll Parallax effect for static background paws ---
