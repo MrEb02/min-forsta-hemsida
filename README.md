@@ -1,13 +1,16 @@
-# Allt om Katter 🐾
+# 🐾 Interaktiv Kattsida
 
-Det här är ett enkelt repository för en statisk hemsida om katter. Perfekt för att testa GitHub Pages!
+En levande, stilren och interaktiv webbsida tillägnad katter! Den här hemsidan bjuder på mjuk design, rörliga element och roliga funktioner för alla kattälskare.
 
-## Innehåll
-* `index.html` - Hemsidans struktur, texter och stil (CSS).
+## ✨ Funktioner
+- **Interaktiv Laserpekare:** Följ muspekaren eller klicka runt för att leka med en virtuell laserstråle.
+- **Klappa Katten:** Interaktiva funktioner där katten spinner och hjärtor dyker upp när du interagerar.
+- **Katt-personlighetstest:** Ta reda på vilken katttyp du matchar bäst med.
+- **Slumpmässig kattfakta:** Lär dig nya och roliga saker om katter med ett klick.
 
-## Hur du använder detta på GitHub Pages
-1. Skapa ett nytt repository på GitHub (t.ex. namngivna `katt-sida`).
-2. Ladda upp `index.html` till ditt repository.
-3. Gå till **Settings** -> **Pages** i ditt repository.
-4. Under "Build and deployment", välj **Deploy from a branch** och sätt din main-branch som källa.
-5. Spara! Efter någon minut är din hemsida live på webben.
+## 🚀 Kom igång / Testa sidan
+1. Klona ner repot eller ladda ner filerna.
+2. Öppna `index.html` (eller din huvudfil för kattsidan) direkt i din webbläsare för att köra sidan.
+
+## 🛠️ Teknik
+Byggd med modern **HTML**, **CSS** och **JavaScript** med fokus på levande animationer och responsiv design.
