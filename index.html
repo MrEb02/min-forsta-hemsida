@@ -32,8 +32,7 @@
                     animation: {
                         'float': 'float 4s ease-in-out infinite',
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'bounce-subtle': 'bounceSubtle 2s infinite',
-                        'spin-slow': 'spin 12s linear infinite'
+                        'bounce-subtle': 'bounceSubtle 2s infinite'
                     },
                     keyframes: {
                         float: {
@@ -80,6 +79,13 @@
             box-shadow: 0 0 12px 4px rgba(255, 0, 85, 0.8), 0 0 25px 8px rgba(255, 0, 85, 0.5);
         }
 
+        /* Chasing Cat Sprite */
+        #chasing-cat {
+            pointer-events: none;
+            transition: left 0.25s cubic-bezier(0.1, 0.8, 0.3, 1), top 0.25s cubic-bezier(0.1, 0.8, 0.3, 1), transform 0.2s ease;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+        }
+
         /* Floating particles */
         .heart-particle {
             position: fixed;
@@ -104,13 +110,11 @@
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* Tilt smooth movement */
         .tilt-card {
             transform-style: preserve-3d;
             transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.2s ease;
         }
 
-        /* Team Battle Animations */
         .team-pink-glow {
             box-shadow: 0 0 35px rgba(255, 118, 117, 0.6);
             border-color: #FF7675 !important;
@@ -126,17 +130,25 @@
     <!-- Laser Dot Target -->
     <div id="laser-pointer" class="fixed top-0 left-0 w-4 h-4 bg-red-600 rounded-full z-50 hidden opacity-90"></div>
 
-    <!-- Floating Paw Background Particles -->
-    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 opacity-10">
-        <i class="fa-solid fa-paw absolute top-12 left-10 text-4xl text-warmOrange animate-float" style="animation-delay: 0s;"></i>
-        <i class="fa-solid fa-paw absolute top-1/3 right-16 text-6xl text-purrPurple animate-float" style="animation-delay: 1.5s;"></i>
-        <i class="fa-solid fa-paw absolute bottom-1/4 left-1/4 text-5xl text-catPink animate-float" style="animation-delay: 2.5s;"></i>
-        <i class="fa-solid fa-paw absolute bottom-10 right-1/3 text-4xl text-warmOrange animate-float" style="animation-delay: 0.8s;"></i>
+    <!-- Chasing Cat Meme Image -->
+    <img id="chasing-cat" src="images/kattmeme.jpg" alt="Jagande katt" class="fixed top-0 left-0 w-28 h-28 object-contain z-40 hidden -translate-x-1/2 -translate-y-1/2">
+
+    <!-- Static Background Paws with Scroll Parallax Effect -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 opacity-15">
+        <i class="fa-solid fa-paw parallax-paw absolute top-10 left-8 text-5xl text-warmOrange" data-speed="0.15"></i>
+        <i class="fa-solid fa-paw parallax-paw absolute top-40 right-12 text-6xl text-purrPurple" data-speed="-0.25"></i>
+        <i class="fa-solid fa-paw parallax-paw absolute top-96 left-1/4 text-4xl text-catPink" data-speed="0.3"></i>
+        <i class="fa-solid fa-paw parallax-paw absolute top-[600px] right-1/3 text-7xl text-warmOrange" data-speed="-0.1"></i>
+        <i class="fa-solid fa-paw parallax-paw absolute top-[900px] left-12 text-5xl text-purrPurple" data-speed="0.2"></i>
+        <i class="fa-solid fa-paw parallax-paw absolute top-[1300px] right-10 text-6xl text-catPink" data-speed="-0.35"></i>
+        <i class="fa-solid fa-paw parallax-paw absolute top-[1700px] left-1/3 text-4xl text-warmOrange" data-speed="0.18"></i>
+        <i class="fa-solid fa-paw parallax-paw absolute top-[2100px] right-1/4 text-8xl text-purrPurple" data-speed="-0.12"></i>
+        <i class="fa-solid fa-paw parallax-paw absolute top-[2500px] left-20 text-5xl text-catPink" data-speed="0.28"></i>
     </div>
 
     <!-- Header / Navigation -->
     <nav class="fixed top-0 left-0 w-full glass-nav z-40 transition-all duration-300 px-6 py-4">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
+        <div class="max-w-6xl mx-auto flex justify-between items-center flex-wrap gap-4">
             <a href="#" class="flex items-center gap-3 group">
                 <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-warmOrange to-softPeach flex items-center justify-center text-white text-xl shadow-lg shadow-warmOrange/30 group-hover:rotate-12 transition-transform">
                     <i class="fa-solid fa-cat"></i>
@@ -144,15 +156,22 @@
                 <span class="font-display font-bold text-2xl text-darkSlate tracking-tight">Katt<span class="text-warmOrange">Världen</span></span>
             </a>
 
-            <!-- Action Controls -->
-            <div class="flex items-center gap-3">
-                <button id="toggle-laser" onclick="toggleLaserPointer()" class="flex items-center gap-2 px-4 py-2 rounded-full font-display font-semibold text-sm bg-white/80 hover:bg-red-50 text-red-600 border border-red-200 shadow-sm hover:shadow transition-all active:scale-95">
+            <!-- Action Controls (Laser, Välj Lag, Kattquiz) -->
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+                <button id="toggle-laser" onclick="toggleLaserPointer()" class="flex items-center gap-2 px-4 py-2 rounded-full font-display font-semibold text-xs sm:text-sm bg-white/80 hover:bg-red-50 text-red-600 border border-red-200 shadow-sm hover:shadow transition-all active:scale-95">
                     <i class="fa-solid fa-bullseye text-red-500 animate-pulse"></i>
                     <span id="laser-text">Aktivera Laserleksak</span>
                 </button>
-                <a href="#team-quiz" class="flex items-center gap-2 px-5 py-2 rounded-full font-display font-semibold text-sm bg-catPink hover:bg-pink-600 text-white shadow-md transition-all active:scale-95">
-                    <i class="fa-solid fa-[#FF7675] fa-shield-cat"></i>
+
+                <a href="#team-quiz" class="flex items-center gap-2 px-4 py-2 rounded-full font-display font-semibold text-xs sm:text-sm bg-catPink hover:bg-pink-600 text-white shadow-md transition-all active:scale-95">
+                    <i class="fa-solid fa-shield-cat"></i>
                     <span>Välj Lag!</span>
+                </a>
+
+                <!-- NEW BUTTON TO THE RIGHT OF "VÄLJ LAG" -->
+                <a href="#quiz" class="flex items-center gap-2 px-4 py-2 rounded-full font-display font-semibold text-xs sm:text-sm bg-purrPurple hover:bg-purple-700 text-white shadow-md transition-all active:scale-95">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Kattquiz</span>
                 </a>
             </div>
         </div>
@@ -322,7 +341,7 @@
         </div>
     </section>
 
-    <!-- NEW FEATURE: ROSA vs RÖDA LAGET QUIZ -->
+    <!-- Rosa vs Röda Laget Quiz -->
     <section id="team-quiz" class="py-16 px-6 relative z-10">
         <div class="max-w-4xl mx-auto glass-card rounded-3xl p-8 sm:p-12 shadow-2xl border-2 border-pink-200 transition-all duration-700" id="team-quiz-card">
             <div class="text-center mb-8">
@@ -331,7 +350,6 @@
                 <p class="text-slate-600 text-sm sm:text-base mt-2">Vilket lag tillhör din inre katt? Välj din sida och upplev lagets magi!</p>
             </div>
 
-            <!-- Team Selection Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6" id="team-selection">
                 <!-- Pink Team -->
                 <button onclick="selectTeam('pink', event)" class="group relative overflow-hidden rounded-3xl p-6 bg-gradient-to-br from-pink-100 via-rose-50 to-white border-2 border-pink-300 hover:border-pink-500 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 text-left">
@@ -366,7 +384,7 @@
                 </button>
             </div>
 
-            <!-- Team Result View (Hidden initially) -->
+            <!-- Team Result View -->
             <div id="team-result" class="hidden text-center space-y-6 py-6">
                 <div id="team-badge" class="w-24 h-24 rounded-3xl text-white flex items-center justify-center text-5xl mx-auto shadow-2xl animate-bounce">
                     🌸
@@ -387,7 +405,7 @@
         </div>
     </section>
 
-    <!-- Interactive Fun Fact Generator Section -->
+    <!-- Fun Fact Generator Section -->
     <section class="py-12 px-6 relative z-10">
         <div class="max-w-4xl mx-auto glass-card rounded-3xl p-8 sm:p-10 shadow-xl text-center relative overflow-hidden">
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-softPeach/50 rounded-full blur-xl pointer-events-none"></div>
@@ -411,7 +429,7 @@
         </div>
     </section>
 
-    <!-- Interactive Cat Personality Quiz Section -->
+    <!-- Cat Personality Quiz Section -->
     <section id="quiz" class="py-16 px-6 relative z-10">
         <div class="max-w-3xl mx-auto bg-white/90 backdrop-blur-lg rounded-3xl p-8 sm:p-12 shadow-2xl border border-orange-100">
             <div class="text-center mb-8">
@@ -507,14 +525,23 @@
 
     <!-- Interactive JavaScript Logic -->
     <script>
-        // --- 1. Audio Sound Effects (Web Audio API Synthesizer) ---
+        // --- 1. Scroll Parallax effect for static background paws ---
+        window.addEventListener('scroll', () => {
+            const paws = document.querySelectorAll('.parallax-paw');
+            const scrolled = window.pageYOffset;
+            
+            paws.forEach(paw => {
+                const speed = parseFloat(paw.getAttribute('data-speed'));
+                paw.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.05}deg)`;
+            });
+        });
+
+        // --- 2. Audio Sound Effects ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
 
         function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new AudioContext();
-            }
+            if (!audioCtx) audioCtx = new AudioContext();
         }
 
         function playMeowSound() {
@@ -524,7 +551,6 @@
                 const gain = audioCtx.createGain();
 
                 osc.type = 'sine';
-                
                 const now = audioCtx.currentTime;
                 osc.frequency.setValueAtTime(400, now);
                 osc.frequency.exponentialRampToValueAtTime(800, now + 0.15);
@@ -545,7 +571,6 @@
             try {
                 initAudio();
                 const now = audioCtx.currentTime;
-                
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 
@@ -582,12 +607,10 @@
             badge.innerText = text;
             document.body.appendChild(badge);
 
-            setTimeout(() => {
-                badge.remove();
-            }, 1000);
+            setTimeout(() => badge.remove(), 1000);
         }
 
-        // --- 2. Pet the Cat Effect ---
+        // --- 3. Pet the Cat Particles ---
         function handlePetCat(event, message) {
             playMeowSound();
             createParticles(event.clientX, event.clientY, ['❤️', '💖', '🐾', '✨', '😻']);
@@ -611,9 +634,11 @@
             }
         }
 
-        // --- 3. Interactive Laser Pointer Toy ---
+        // --- 4. Interactive Laser Toy & Cat Chasing Logic ---
         let laserActive = false;
         const laserDot = document.getElementById('laser-pointer');
+        const chasingCat = document.getElementById('chasing-cat');
+        let catX = 100, catY = 100;
 
         function toggleLaserPointer() {
             laserActive = !laserActive;
@@ -621,21 +646,43 @@
 
             if (laserActive) {
                 laserDot.classList.remove('hidden');
+                chasingCat.classList.remove('hidden');
                 laserText.innerText = "Stäng av Laserleksak";
-                document.addEventListener('mousemove', followLaser);
+                document.addEventListener('mousemove', followLaserAndCat);
             } else {
                 laserDot.classList.add('hidden');
+                chasingCat.classList.add('hidden');
                 laserText.innerText = "Aktivera Laserleksak";
-                document.removeEventListener('mousemove', followLaser);
+                document.removeEventListener('mousemove', followLaserAndCat);
             }
         }
 
-        function followLaser(e) {
+        function followLaserAndCat(e) {
             if (!laserActive) return;
-            laserDot.style.transform = `translate(${e.clientX - 8}px, ${e.clientY - 8}px)`;
+            const targetX = e.clientX;
+            const targetY = e.clientY;
+
+            // Move Laser dot
+            laserDot.style.transform = `translate(${targetX - 8}px, ${targetY - 8}px)`;
+
+            // Cat chases laser (slightly offset behind)
+            chasingCat.style.left = `${targetX}px`;
+            chasingCat.style.top = `${targetY}px`;
+
+            // Rotate cat towards target direction
+            const angle = Math.atan2(targetY - catY, targetX - catX) * (180 / Math.PI);
+            chasingCat.style.transform = `translate(-50%, -50%) rotate(${angle + 90}deg)`;
+
+            catX = targetX;
+            catY = targetY;
+
+            // Random chance for cat to meow while chasing
+            if(Math.random() < 0.03) {
+                playMeowSound();
+            }
         }
 
-        // --- 4. 3D Parallax Tilt Effect ---
+        // --- 5. 3D Tilt Effect ---
         function handleTilt(e, card) {
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -654,7 +701,7 @@
             card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
         }
 
-        // --- 5. Dynamic Cat Fun Fact Generator ---
+        // --- 6. Fun Fact Generator ---
         const catFacts = [
             "Katter tillbringar ungefär 70% av sina liv med att sofa och sova.",
             "En katts spinnande kan ha en läkande effekt på mänskliga ben och muskler (mellan 20-140 Hz).",
@@ -678,7 +725,7 @@
             }, 300);
         }
 
-        // --- 6. Quiz 1 State Management ---
+        // --- 7. Quiz 1 State Management ---
         let quizAnswers = [];
 
         function answerQuiz(step, answer) {
@@ -733,7 +780,7 @@
             document.getElementById('step-3').classList.add('hidden');
         }
 
-        // --- 7. NEW FEATURE: TEAM ROSA vs RÖDA QUIZ LOGIC ---
+        // --- 8. Team Rosa vs Röda Quiz ---
         function selectTeam(team, event) {
             playMeowSound();
             const quizCard = document.getElementById('team-quiz-card');
@@ -747,7 +794,6 @@
             result.classList.remove('hidden');
 
             if (team === 'pink') {
-                // Pink Team Effect
                 quizCard.className = "max-w-4xl mx-auto glass-card rounded-3xl p-8 sm:p-12 shadow-2xl transition-all duration-700 team-pink-glow bg-gradient-to-br from-pink-50/90 to-white";
                 badge.className = "w-24 h-24 rounded-3xl bg-gradient-to-tr from-pink-400 to-rose-400 text-white flex items-center justify-center text-5xl mx-auto shadow-2xl animate-bounce";
                 badge.innerText = "🌸";
@@ -755,12 +801,10 @@
                 title.className = "font-display font-bold text-3xl text-pink-600";
                 desc.innerText = "Du är mästaren på mys och magiska spinn! Sidan har nu fyllts med kärleksfull rosa energi.";
                 
-                // Trigger Pink Particles
                 createParticles(event.clientX, event.clientY, ['🌸', '💖', '🎀', '💕', '🐱']);
                 document.body.style.backgroundColor = '#FFF0F5';
 
             } else {
-                // Red Team Effect
                 quizCard.className = "max-w-4xl mx-auto glass-card rounded-3xl p-8 sm:p-12 shadow-2xl transition-all duration-700 team-red-glow bg-gradient-to-br from-red-50/90 to-white";
                 badge.className = "w-24 h-24 rounded-3xl bg-gradient-to-tr from-red-500 to-orange-500 text-white flex items-center justify-center text-5xl mx-auto shadow-2xl animate-bounce";
                 badge.innerText = "🔥";
@@ -768,7 +812,6 @@
                 title.className = "font-display font-bold text-3xl text-red-600";
                 desc.innerText = "Du har ren busenergi i blodet! Redo att jaga lasern och ställa till med spratt. Röda laget äger!";
                 
-                // Trigger Red Particles
                 createParticles(event.clientX, event.clientY, ['💥', '🔥', '⚡', '🐾', '🥊']);
                 document.body.style.backgroundColor = '#FFF4F4';
             }
