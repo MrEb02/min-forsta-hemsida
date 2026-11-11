@@ -597,10 +597,13 @@
             modal.classList.remove('hidden');
         }
         
-        // När man trycker på "o nej" eller kryssar ner
+                // När man trycker på "o nej" stängs rutan och sidan stängs ner
         function closeWetCatModal() {
             const modal = document.getElementById('wet-cat-modal');
             modal.classList.add('hidden');
+            
+            // Skickar till tom sida (stänger ner)
+            window.location.href = "about:blank";
         }
         
         // När man trycker på "ge honom mat"
