@@ -690,23 +690,6 @@
 
             }
 
-        /* Röstningsfunktion för Lag Rosa vs Lag Röd */
-        let pinkVotes = 5;
-        let redVotes = 5;
-
-        function chooseTeam(team) {
-            if(team === 'pink') {
-                pinkVotes++;
-                document.body.className = 'pink-theme';
-                alert('Du valde Lag Rosa! 💖 Stilrent och gosigt!');
-            } else {
-                redVotes++;
-                document.body.className = 'red-theme';
-                alert('Du valde Lag Röd! ❤️ Full fart och energi!');
-            }
-            document.getElementById('pinkCount').innerText = pinkVotes;
-            document.getElementById('redCount').innerText = redVotes;
-        }
         }
     </script>
 </body>
