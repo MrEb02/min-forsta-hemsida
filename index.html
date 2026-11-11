@@ -82,8 +82,25 @@
         /* Chasing Cat Sprite */
         #chasing-cat {
             pointer-events: none;
-            transition: left 1s cubic-bezier(0.1, 0.8, 0.3, 1), top 1s cubic-bezier(0.1, 0.8, 0.3, 1), transform 0.7s ease;
+            transition: transform 0.2s ease;
             filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+        }
+
+        /* Bouncing Wet Cat */
+        #bouncing-wet-cat {
+            position: fixed;
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #FF7675;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 999;
+            transition: transform 0.1s;
+        }
+        #bouncing-wet-cat:hover {
+            transform: scale(1.15);
         }
 
         /* Floating particles */
@@ -100,7 +117,6 @@
             100% { opacity: 0; transform: translateY(-90px) scale(0.8) rotate(-15deg); }
         }
 
-        /* Sound ripple */
         .sound-badge {
             animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
@@ -131,7 +147,10 @@
     <div id="laser-pointer" class="fixed top-0 left-0 w-4 h-4 bg-red-600 rounded-full z-50 hidden opacity-90"></div>
 
     <!-- Chasing Cat Meme Image -->
-    <img id="chasing-cat" src="images/kattmeme.png" alt="Jagande katt" class="fixed top-0 left-0 w-28 h-28 object-contain z-40 hidden -translate-x-1/2 -translate-y-1/2">
+    <img id="chasing-cat" src="images/kattmeme.jpg" alt="Jagande katt" class="fixed top-0 left-0 w-28 h-28 object-contain z-40 hidden -translate-x-1/2 -translate-y-1/2">
+
+    <!-- Bouncing Wet Cat (Klicka för att stänga ner) -->
+    <img id="bouncing-wet-cat" src="images/wet-cat.png" alt="Stötande våt katt" title="Klicka på mig om du vågar stänga ner!" onclick="closePage()">
 
     <!-- Static Background Paws with Scroll Parallax Effect -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 opacity-15">
@@ -156,7 +175,7 @@
                 <span class="font-display font-bold text-2xl text-darkSlate tracking-tight">Katt<span class="text-warmOrange">Världen</span></span>
             </a>
 
-            <!-- Action Controls (Laser, Välj Lag, Kattquiz) -->
+            <!-- Action Controls -->
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
                 <button id="toggle-laser" onclick="toggleLaserPointer()" class="flex items-center gap-2 px-4 py-2 rounded-full font-display font-semibold text-xs sm:text-sm bg-white/80 hover:bg-red-50 text-red-600 border border-red-200 shadow-sm hover:shadow transition-all active:scale-95">
                     <i class="fa-solid fa-bullseye text-red-500 animate-pulse"></i>
@@ -168,7 +187,6 @@
                     <span>Välj Lag!</span>
                 </a>
 
-                <!-- NEW BUTTON TO THE RIGHT OF "VÄLJ LAG" -->
                 <a href="#quiz" class="flex items-center gap-2 px-4 py-2 rounded-full font-display font-semibold text-xs sm:text-sm bg-purrPurple hover:bg-purple-700 text-white shadow-md transition-all active:scale-95">
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                     <span>Kattquiz</span>
@@ -525,7 +543,43 @@
 
     <!-- Interactive JavaScript Logic -->
     <script>
-        // --- 1. Scroll Parallax effect for static background paws ---
+        // --- 1. Bouncing Wet Cat Logic ---
+        let posX = 100, posY = 100;
+        let velX = 2.5, velY = 2.0; // Hastighet på studsande katten
+        const wetCat = document.getElementById('bouncing-wet-cat');
+
+        function updateBouncingCat() {
+            posX += velX;
+            posY += velY;
+
+            const maxX = window.innerWidth - wetCat.clientWidth;
+            const maxY = window.innerHeight - wetCat.clientHeight;
+
+            if (posX <= 0 || posX >= maxX) {
+                velX *= -1;
+                posX = Math.max(0, Math.min(posX, maxX));
+            }
+            if (posY <= 0 || posY >= maxY) {
+                velY *= -1;
+                posY = Math.max(0, Math.min(posY, maxY));
+            }
+
+            wetCat.style.left = `${posX}px`;
+            wetCat.style.top = `${posY}px`;
+
+            requestAnimationFrame(updateBouncingCat);
+        }
+        updateBouncingCat();
+
+        // Stäng ner sidan vid klick
+        function closePage() {
+            alert("Våt katt attackerar! Stänger ner sidan...");
+            window.close();
+            // Om webbläsaren blockerar window.close() skickas man till en tom sida / stängs av
+            window.location.href = "about:blank";
+        }
+
+        // --- 2. Scroll Parallax effect for static background paws ---
         window.addEventListener('scroll', () => {
             const paws = document.querySelectorAll('.parallax-paw');
             const scrolled = window.pageYOffset;
@@ -536,7 +590,7 @@
             });
         });
 
-        // --- 2. Audio Sound Effects ---
+        // --- 3. Audio Sound Effects ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
 
@@ -610,7 +664,7 @@
             setTimeout(() => badge.remove(), 1000);
         }
 
-        // --- 3. Pet the Cat Particles ---
+        // --- 4. Pet the Cat Particles ---
         function handlePetCat(event, message) {
             playMeowSound();
             createParticles(event.clientX, event.clientY, ['❤️', '💖', '🐾', '✨', '😻']);
@@ -634,11 +688,12 @@
             }
         }
 
-        // --- 4. Interactive Laser Toy & Cat Chasing Logic ---
+        // --- 5. Interactive Laser Toy & Cat Chasing Logic ---
         let laserActive = false;
         const laserDot = document.getElementById('laser-pointer');
         const chasingCat = document.getElementById('chasing-cat');
-        let catX = 100, catY = 100;
+        let targetX = 0, targetY = 0;
+        let currentX = 0, currentY = 0;
 
         function toggleLaserPointer() {
             laserActive = !laserActive;
@@ -659,30 +714,31 @@
 
         function followLaserAndCat(e) {
             if (!laserActive) return;
-            const targetX = e.clientX;
-            const targetY = e.clientY;
-
-            // Move Laser dot
+            targetX = e.clientX;
+            targetY = e.clientY;
             laserDot.style.transform = `translate(${targetX - 8}px, ${targetY - 8}px)`;
-
-            // Cat chases laser (slightly offset behind)
-            chasingCat.style.left = `${targetX}px`;
-            chasingCat.style.top = `${targetY}px`;
-
-            // Rotate cat towards target direction
-            const angle = Math.atan2(targetY - catY, targetX - catX) * (180 / Math.PI);
-            chasingCat.style.transform = `translate(-50%, -50%) rotate(${angle + 90}deg)`;
-
-            catX = targetX;
-            catY = targetY;
-
-            // Random chance for cat to meow while chasing
-            if(Math.random() < 0.03) {
-                playMeowSound();
-            }
         }
 
-        // --- 5. 3D Tilt Effect ---
+        function animateCat() {
+            if (laserActive) {
+                currentX += (targetX - currentX) * 0.08;
+                currentY += (targetY - currentY) * 0.08;
+
+                chasingCat.style.left = `${currentX}px`;
+                chasingCat.style.top = `${currentY}px`;
+
+                const angle = Math.atan2(targetY - currentY, targetX - currentX) * (180 / Math.PI);
+                chasingCat.style.transform = `translate(-50%, -50%) rotate(${angle + 90}deg)`;
+
+                if(Math.random() < 0.02) {
+                    playMeowSound();
+                }
+            }
+            requestAnimationFrame(animateCat);
+        }
+        animateCat();
+
+        // --- 6. 3D Tilt Effect ---
         function handleTilt(e, card) {
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -701,7 +757,7 @@
             card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
         }
 
-        // --- 6. Fun Fact Generator ---
+        // --- 7. Fun Fact Generator ---
         const catFacts = [
             "Katter tillbringar ungefär 70% av sina liv med att sofa och sova.",
             "En katts spinnande kan ha en läkande effekt på mänskliga ben och muskler (mellan 20-140 Hz).",
@@ -725,7 +781,7 @@
             }, 300);
         }
 
-        // --- 7. Quiz 1 State Management ---
+        // --- 8. Quiz 1 State Management ---
         let quizAnswers = [];
 
         function answerQuiz(step, answer) {
@@ -780,7 +836,7 @@
             document.getElementById('step-3').classList.add('hidden');
         }
 
-        // --- 8. Team Rosa vs Röda Quiz ---
+        // --- 9. Team Rosa vs Röda Quiz ---
         function selectTeam(team, event) {
             playMeowSound();
             const quizCard = document.getElementById('team-quiz-card');
